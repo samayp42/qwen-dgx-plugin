@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+printf '%s\n' "$@" > "$QWEN_DGX_TEST_OMP_ARGS"
+printf 'stub\n'

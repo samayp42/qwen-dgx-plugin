@@ -1,11 +1,11 @@
 ---
 name: qwen-dgx
-description: Delegate implementation work to a self-hosted Qwen model (via omp) so Claude only plans, briefs, reviews, and verifies. Use for well-scoped coding tasks - implement a function/component from a spec, mechanical refactors, writing tests, fixing a diagnosed bug, porting, boilerplate. Trigger on /qwen-dgx, "hand this to qwen", "use the dgx model", "save tokens on this", or when a task is implementation-heavy but design-light.
+description: Delegate implementation work to a discovered OpenAI-compatible model on a configured DGX host (via omp) so Claude Code or Codex only plans, briefs, reviews, and verifies. Use for well-scoped coding tasks - implement a function/component from a spec, mechanical refactors, writing tests, fixing a diagnosed bug, porting, boilerplate. Trigger on /qwen-dgx, "hand this to qwen", "use the dgx model", "save tokens on this", or when a task is implementation-heavy but design-light.
 ---
 
 # qwen-dgx
 
-Claude thinks and orchestrates. The self-hosted worker (`omp -p` against an OpenAI-compatible endpoint, free tokens) does the typing. The wrapper script is `run.sh` in this skill's base directory (shown above this text).
+Claude Code or Codex thinks and orchestrates. The discovered worker (`omp -p` against an OpenAI-compatible DGX endpoint, free local tokens) does the typing. The wrapper script is `run.sh` in this skill's base directory (shown above this text).
 
 Task from the user: $ARGUMENTS
 
@@ -13,7 +13,7 @@ Task from the user: $ARGUMENTS
 
 1. **Understand first.** Read the relevant code yourself. Decide the design, file layout, names, and acceptance criteria. The worker must not make product or architecture decisions.
 2. **Write a brief** to a file in the scratchpad (`brief-<slug>.md`) using the template below. Be literal: exact paths, exact function signatures, exact behavior, exact verification command. Treat the worker as competent but context-free. Never put secrets in a brief.
-3. **Run it**:
+3. **Run it**. `run.sh` performs bounded, read-only discovery before starting `omp`:
    ```bash
    <skill base directory>/run.sh -f /path/to/brief.md
    ```
@@ -51,4 +51,4 @@ Keep in Claude: diagnosis, architecture, API and UX decisions, anything touching
 
 ## Configuration
 
-`run.sh` reads `QWEN_DGX_ENDPOINT` and `QWEN_DGX_MODEL` from the environment or from `~/.config/qwen-dgx/config` (written by `scripts/setup.sh` in the plugin). Worker rules (no commits, scope discipline, end with REPORT) are injected by run.sh. Logs land in `~/.omp/qwen-dgx/*.log`. The script exits 3 if the endpoint is unreachable and 4 if omp is missing.
+`run.sh` reads explicit `QWEN_DGX_ENDPOINT` and `QWEN_DGX_MODEL` overrides, or discovers a model by probing configured `QWEN_DGX_ENDPOINT_CANDIDATES` and model-serving listeners on one `QWEN_DGX_HOST` over SSH. Set optional `QWEN_DGX_SSH_IDENTITY` to a readable private-key path when that host requires a non-default key; discovery passes it with `IdentitiesOnly=yes`. Port 8000 is reserved and never probed. `scripts/setup.sh` writes `~/.config/qwen-dgx/config` and registers the discovered `dgx` provider for standalone `omp` use; `run.sh` uses a temporary provider file so it can follow a changed endpoint without rewriting global config. Worker rules (no commits, scope discipline, end with REPORT) are injected by run.sh. Logs land in `~/.omp/qwen-dgx/*.log`. The script exits 3 if discovery fails and 4 if omp or Python is missing.

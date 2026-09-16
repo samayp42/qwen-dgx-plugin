@@ -1,0 +1,3 @@
+QWEN_DGX_HOST=dgx-host
+QWEN_DGX_ENDPOINT=http://stale.example:1234/v1
+QWEN_DGX_MODEL=dgx/stale-model

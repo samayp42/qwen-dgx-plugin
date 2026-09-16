@@ -1,0 +1,27 @@
+{
+  "name": "qwen-dgx",
+  "version": "0.2.0",
+  "description": "Delegate coding tasks from Codex or Claude Code to any discovered OpenAI-compatible model on a configured DGX host.",
+  "author": {
+    "name": "Samay Patel",
+    "url": "https://github.com/samayp42"
+  },
+  "homepage": "https://github.com/samayp42/qwen-dgx-plugin",
+  "repository": "https://github.com/samayp42/qwen-dgx-plugin",
+  "license": "MIT",
+  "keywords": ["dgx", "openai-compatible", "coding-agent", "qwen"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Qwen DGX",
+    "shortDescription": "Use a discovered DGX model for delegated coding work.",
+    "longDescription": "Claude Code or Codex can discover a running OpenAI-compatible model on one configured DGX host, while explicit endpoint and model overrides remain available.",
+    "developerName": "Samay Patel",
+    "category": "Productivity",
+    "capabilities": ["Instructions", "Write"],
+    "websiteURL": "https://github.com/samayp42/qwen-dgx-plugin",
+    "defaultPrompt": [
+      "Use the configured DGX model for this implementation task.",
+      "Discover the running OpenAI-compatible endpoint before delegating."
+    ]
+  }
+}

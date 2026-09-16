@@ -1,6 +1,6 @@
 {
   "name": "qwen-dgx",
-  "description": "Delegate implementation work from Claude Code to a self-hosted Qwen model (or any OpenAI-compatible endpoint) through omp, so Claude plans and reviews while the local model types.",
-  "version": "0.1.0",
+  "description": "Delegate implementation work from Claude Code to any discovered OpenAI-compatible model on a configured DGX host through omp.",
+  "version": "0.2.0",
   "author": { "name": "Samay Patel" }
 }

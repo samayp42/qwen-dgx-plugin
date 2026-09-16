@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+if [ "${1:-}" = "${FAKE_DISCOVER_PATH:-}" ]; then
+  printf '%s\n%s\n%s\n' "${QWEN_DGX_ENDPOINT:-}" "${QWEN_DGX_MODEL:-}" "${QWEN_DGX_SSH_IDENTITY:-}" > "$QWEN_DGX_TEST_DISCOVERY_ENV"
+  printf '%s\n%s\n' "$FAKE_ENDPOINT" "$FAKE_MODEL"
+  exit 0
+fi
+exec "$QWEN_DGX_REAL_PYTHON" "$@"

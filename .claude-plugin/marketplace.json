@@ -1,12 +1,12 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "qwen-dgx-plugin",
-  "description": "Hand coding tasks to a self-hosted Qwen worker from Claude Code.",
+  "description": "Delegate coding tasks to a model running on a configured DGX host.",
   "owner": { "name": "Samay Patel", "url": "https://github.com/samayp42" },
   "plugins": [
     {
       "name": "qwen-dgx",
-      "description": "Claude briefs and reviews; a self-hosted Qwen model does the typing through omp.",
+      "description": "Claude briefs and reviews; a discovered DGX model does the typing through omp.",
       "source": "./",
       "category": "productivity"
     }
