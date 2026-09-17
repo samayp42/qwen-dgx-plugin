@@ -1,6 +1,6 @@
 {
   "name": "qwen-dgx",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Delegate coding tasks from Codex or Claude Code to any discovered OpenAI-compatible model on a configured DGX host.",
   "author": {
     "name": "Samay Patel",

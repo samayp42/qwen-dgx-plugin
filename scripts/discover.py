@@ -33,6 +33,7 @@ MODEL_PROCESS_RE = re.compile(
 )
 PID_RE = re.compile(r"pid=(\d+)")
 PROCESS_RE = re.compile(r"^\s*(\d+)\s+(\S+)(?:\s+(.*))?$")
+PORT_FLAG_RE = re.compile(r"(?:^|\s)--port[= ](\d+)")
 
 
 class DiscoveryError(RuntimeError):
@@ -169,19 +170,23 @@ def listener_ports(listener_output: str) -> list[int]:
 
     ss_output, separator, ps_output = listener_output.partition("__QWEN_DGX_PS__")
     processes = _processes(ps_output if separator else "")
+    declared_ports: set[int] = set()
+    for command in processes.values():
+        if is_model_serving_process(command):
+            declared_ports.update(int(port) for port in PORT_FLAG_RE.findall(command))
     ports: set[int] = set()
     for line in ss_output.splitlines():
         if not line.strip() or not re.match(r"^\s*(?:LISTEN|tcp\s+\d|tcp6\s+\d)", line, re.IGNORECASE):
             continue
-        pids = {int(pid) for pid in PID_RE.findall(line)}
-        process_text = " ".join(processes.get(pid, "") for pid in pids)
-        process_text = f"{process_text} {line}"
-        if not is_model_serving_process(process_text):
-            continue
         fields = line.split()
         addresses = fields[3:5] if len(fields) >= 5 else fields
         port = next((_parse_port(address) for address in addresses), None)
-        if port and port != PROTECTED_PORT:
+        if not port or port == PROTECTED_PORT:
+            continue
+        pids = {int(pid) for pid in PID_RE.findall(line)}
+        process_text = " ".join(processes.get(pid, "") for pid in pids)
+        process_text = f"{process_text} {line}"
+        if is_model_serving_process(process_text) or port in declared_ports:
             ports.add(port)
     return sorted(ports)
 

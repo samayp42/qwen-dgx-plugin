@@ -1,6 +1,6 @@
 {
   "name": "qwen-dgx",
   "description": "Delegate implementation work from Claude Code to any discovered OpenAI-compatible model on a configured DGX host through omp.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": { "name": "Samay Patel" }
 }

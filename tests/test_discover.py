@@ -25,6 +25,22 @@ __QWEN_DGX_PS__
 """
         self.assertEqual(discover.listener_ports(listeners), [12345])
 
+    def test_listener_declared_by_model_process_when_owner_pid_hidden(self):
+        listeners = """\
+LISTEN 0 4096 0.0.0.0:8888 0.0.0.0:*
+LISTEN 0 4096 0.0.0.0:8000 0.0.0.0:*
+LISTEN 0 4096 0.0.0.0:9000 0.0.0.0:* users:(("uvicorn",pid=42,fd=3))
+__QWEN_DGX_PS__
+  41 python python3 -m sglang.launch_server --host 0.0.0.0 --port 8888
+  43 python python3 -m sglang.launch_server --port 8000
+  42 python python -m uvicorn app:main --port 9000
+"""
+        self.assertEqual(discover.listener_ports(listeners), [8888])
+
+        listeners = listeners.replace("--port 8888", "--port=8888")
+        self.assertEqual(discover.listener_ports(listeners), [8888])
+
+
     def test_port_8000_is_never_accepted(self):
         with self.assertRaises(discover.DiscoveryError):
             discover.normalize_endpoint("http://dgx.example:8000/v1")
